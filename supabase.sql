@@ -19,6 +19,9 @@ create table if not exists public.rankings (
 create index if not exists rankings_score_created_idx
   on public.rankings (final_score desc, created_at asc);
 
+create index if not exists rankings_user_id_idx
+  on public.rankings (user_id);
+
 alter table public.rankings enable row level security;
 
 drop policy if exists "rankings are publicly readable" on public.rankings;
