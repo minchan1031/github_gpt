@@ -517,7 +517,9 @@ supabase.auth.onAuthStateChange((event, session) => {
 
     if (event === "SIGNED_IN") {
       setAuthMessage();
-      showLobby();
+      if (!gameActive && views.game.hidden) {
+        showLobby();
+      }
       return;
     }
 
