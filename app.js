@@ -504,52 +504,37 @@ actionButtons.forEach((button) => {
   button.addEventListener("click", () => applyAction(button.dataset.action));
 });
 
-const previewView = ["localhost", "127.0.0.1"].includes(window.location.hostname)
-  ? new URLSearchParams(window.location.search).get("preview")
-  : null;
+supabase.auth.onAuthStateChange((event, session) => {
+  currentUser = session?.user || null;
 
-if (previewView === "lobby" || previewView === "game") {
-  currentUser = {
-    id: "00000000-0000-0000-0000-000000000000",
-    email: "preview@example.com",
-    user_metadata: { nickname: "미리보기 도전자" },
-  };
+  // Keep the auth callback synchronous; database calls are scheduled outside it.
+  window.setTimeout(() => {
+    if (event === "INITIAL_SESSION") {
+      if (currentUser) showLobby();
+      else showView("auth");
+      return;
+    }
 
-  if (previewView === "game") startGame();
-  else showLobby();
-} else {
-  supabase.auth.onAuthStateChange((event, session) => {
-    currentUser = session?.user || null;
+    if (event === "SIGNED_IN") {
+      setAuthMessage();
+      showLobby();
+      return;
+    }
 
-    // Keep the auth callback synchronous; database calls are scheduled outside it.
-    window.setTimeout(() => {
-      if (event === "INITIAL_SESSION") {
-        if (currentUser) showLobby();
-        else showView("auth");
-        return;
-      }
+    if (event === "SIGNED_OUT") {
+      gameActive = false;
+      endingHandled = true;
+      logoutButton.disabled = false;
+      setAuthPending(false);
+      setAuthMessage();
+      resetLastResult();
+      showView("auth");
+      return;
+    }
 
-      if (event === "SIGNED_IN") {
-        setAuthMessage();
-        showLobby();
-        return;
-      }
-
-      if (event === "SIGNED_OUT") {
-        gameActive = false;
-        endingHandled = true;
-        logoutButton.disabled = false;
-        setAuthPending(false);
-        setAuthMessage();
-        resetLastResult();
-        showView("auth");
-        return;
-      }
-
-      if (event === "USER_UPDATED" && currentUser && !views.lobby.hidden) {
-        userNickname.textContent = getNickname();
-      }
-    }, 0);
-  });
-}
+    if (event === "USER_UPDATED" && currentUser && !views.lobby.hidden) {
+      userNickname.textContent = getNickname();
+    }
+  }, 0);
+});
 
