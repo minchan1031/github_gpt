@@ -1,0 +1,237 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="100일 동안 지식, 체력, 스트레스를 관리하는 입시 생존 시뮬레이션"
+    />
+    <meta name="theme-color" content="#f5f7fa" />
+    <title>D-100 입시 생존기</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <main class="app-shell">
+      <div id="app-loader" class="app-loader" role="status" aria-live="polite">
+        <span class="loader-dot" aria-hidden="true"></span>
+        로그인 상태를 확인하고 있습니다.
+      </div>
+
+      <section id="auth-view" class="view auth-view" aria-labelledby="auth-title" hidden>
+        <div class="brand-block">
+          <p class="eyebrow">100 DAYS, ONE CHANCE</p>
+          <h1 id="auth-title" tabindex="-1">D-100 입시 생존기</h1>
+          <p class="lead">공부와 휴식의 균형을 찾아 원하는 결과에 도전하세요.</p>
+        </div>
+
+        <form id="auth-form" class="auth-form" novalidate>
+          <div class="field-group">
+            <label for="email">이메일</label>
+            <input
+              id="email"
+              name="email"
+              type="email"
+              autocomplete="email"
+              inputmode="email"
+              placeholder="student@example.com"
+              required
+            />
+          </div>
+
+          <div class="field-group">
+            <label for="password">비밀번호</label>
+            <input
+              id="password"
+              name="password"
+              type="password"
+              autocomplete="current-password"
+              minlength="6"
+              placeholder="6자 이상 입력"
+              required
+            />
+          </div>
+
+          <div class="field-group">
+            <label for="nickname">닉네임</label>
+            <input
+              id="nickname"
+              name="nickname"
+              type="text"
+              autocomplete="nickname"
+              maxlength="20"
+              placeholder="회원가입할 때 입력"
+            />
+            <p class="field-hint">닉네임은 회원가입 시에만 필요합니다.</p>
+          </div>
+
+          <p id="auth-message" class="form-message" role="alert" aria-live="assertive"></p>
+
+          <div class="auth-actions">
+            <button id="login-button" class="button button-primary" type="submit">
+              로그인
+            </button>
+            <button id="signup-button" class="button button-secondary" type="button">
+              회원가입
+            </button>
+          </div>
+        </form>
+      </section>
+
+      <section id="lobby-view" class="view lobby-view" aria-labelledby="lobby-title" hidden>
+        <header class="view-header">
+          <div>
+            <p class="eyebrow">STUDY LOBBY</p>
+            <h1 id="lobby-title" tabindex="-1">도전 준비 완료</h1>
+            <p class="user-greeting"><strong id="user-nickname">도전자</strong>님, 오늘의 전략을 시작하세요.</p>
+          </div>
+          <button id="logout-button" class="button button-ghost" type="button">로그아웃</button>
+        </header>
+
+        <div id="last-result" class="result-banner" role="status" hidden></div>
+
+        <section class="start-card" aria-labelledby="start-title">
+          <div>
+            <p class="card-kicker">NEW CHALLENGE</p>
+            <h2 id="start-title">100일의 선택이 결과를 만듭니다.</h2>
+            <p>체력과 스트레스를 관리하면서 지식을 최대한 높여 보세요.</p>
+          </div>
+          <button id="start-button" class="button button-primary button-large" type="button">
+            게임 시작
+          </button>
+        </section>
+
+        <section class="ranking-card" aria-labelledby="ranking-title">
+          <div class="section-heading">
+            <div>
+              <p class="card-kicker">HALL OF FAME</p>
+              <h2 id="ranking-title">명예의 전당</h2>
+            </div>
+            <button id="refresh-ranking-button" class="text-button" type="button">
+              새로고침
+            </button>
+          </div>
+
+          <p id="ranking-status" class="ranking-status" role="status" aria-live="polite">
+            랭킹을 불러오는 중입니다.
+          </p>
+
+          <div class="table-wrap">
+            <table>
+              <caption class="sr-only">최종 지식 점수 기준 상위 10명</caption>
+              <thead>
+                <tr>
+                  <th scope="col">순위</th>
+                  <th scope="col">닉네임</th>
+                  <th scope="col">최종 지식</th>
+                  <th scope="col">결과</th>
+                  <th scope="col">도전일</th>
+                </tr>
+              </thead>
+              <tbody id="ranking-body"></tbody>
+            </table>
+          </div>
+        </section>
+      </section>
+
+      <section id="game-view" class="view game-view" aria-labelledby="game-title" hidden>
+        <header class="game-header">
+          <div>
+            <p class="eyebrow">FINAL COUNTDOWN</p>
+            <h1 id="game-title" tabindex="-1">입시 레이스</h1>
+          </div>
+          <div class="day-badge" aria-label="남은 날짜">
+            <span>D-DAY</span>
+            <strong id="day-value">100</strong>
+          </div>
+        </header>
+
+        <section class="stats-grid" aria-label="현재 능력치">
+          <article class="stat-card knowledge-card">
+            <p class="stat-label">누적 지식</p>
+            <strong id="knowledge-value" class="knowledge-value">0</strong>
+            <p class="stat-caption">최종 결과를 결정하는 점수</p>
+          </article>
+
+          <article class="stat-card meter-card">
+            <div class="meter-heading">
+              <span class="stat-label">체력</span>
+              <strong id="health-value">100 / 100</strong>
+            </div>
+            <div
+              id="health-progress"
+              class="progress-track health-track"
+              role="progressbar"
+              aria-label="체력"
+              aria-valuemin="0"
+              aria-valuemax="100"
+              aria-valuenow="100"
+            >
+              <span id="health-progress-fill" class="progress-fill"></span>
+            </div>
+            <p id="health-state" class="meter-state">안정</p>
+          </article>
+
+          <article class="stat-card meter-card">
+            <div class="meter-heading">
+              <span class="stat-label">스트레스</span>
+              <strong id="stress-value">0 / 100</strong>
+            </div>
+            <div
+              id="stress-progress"
+              class="progress-track stress-track"
+              role="progressbar"
+              aria-label="스트레스"
+              aria-valuemin="0"
+              aria-valuemax="100"
+              aria-valuenow="0"
+            >
+              <span id="stress-progress-fill" class="progress-fill"></span>
+            </div>
+            <p id="stress-state" class="meter-state">여유</p>
+          </article>
+        </section>
+
+        <section class="actions-card" aria-labelledby="action-title">
+          <div class="section-heading">
+            <div>
+              <p class="card-kicker">CHOOSE YOUR DAY</p>
+              <h2 id="action-title">오늘의 행동</h2>
+            </div>
+            <p class="action-note">행동할 때마다 하루가 지나갑니다.</p>
+          </div>
+
+          <div class="action-grid">
+            <button class="action-button" type="button" data-action="study">
+              <span class="action-name">일반 공부</span>
+              <span class="action-effect">지식 +10 · 체력 −10 · 스트레스 +10</span>
+            </button>
+            <button class="action-button action-button-intense" type="button" data-action="cram">
+              <span class="action-name">벼락치기</span>
+              <span class="action-effect">지식 +25 · 체력 −25 · 스트레스 +30</span>
+            </button>
+            <button class="action-button action-button-rest" type="button" data-action="rest">
+              <span class="action-name">휴식하기</span>
+              <span class="action-effect">체력 +30 · 스트레스 −20</span>
+            </button>
+          </div>
+        </section>
+
+        <section class="log-card" aria-labelledby="log-title">
+          <div class="section-heading compact-heading">
+            <div>
+              <p class="card-kicker">DAILY LOG</p>
+              <h2 id="log-title">기록</h2>
+            </div>
+            <span class="newest-label">최신순</span>
+          </div>
+          <p id="latest-log" class="sr-only" aria-live="polite"></p>
+          <ol id="game-log" class="game-log" tabindex="0"></ol>
+        </section>
+      </section>
+    </main>
+
+    <script type="module" src="app.js"></script>
+  </body>
+</html>
+
